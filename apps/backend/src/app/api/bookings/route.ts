@@ -135,7 +135,7 @@ export const POST = withAuth(async (req: NextRequest, { user }) => {
       // 6. Record audit note
       await tx.note.create({
         data: {
-          content: `Unit ${unit.unitNumber} (${unit.building.project.name} - ${unit.building.name}) officially booked for $${finalPrice.toLocaleString()} with initial token $${bookingAmount.toLocaleString()}.`,
+          content: `Unit ${unit.unitNumber} (${unit.building.project.name} - ${unit.building.name}) officially booked for ₹${finalPrice.toLocaleString('en-IN')} with initial token ₹${bookingAmount.toLocaleString('en-IN')}.`,
           leadId: lead.id,
           authorId: user.id,
         },
@@ -164,9 +164,13 @@ export const POST = withAuth(async (req: NextRequest, { user }) => {
       error.message?.includes('UNIT_UNAVAILABLE') ||
       error.message?.includes('LEAD_ALREADY_BOOKED')
     ) {
+      let cleanMessage = 'This unit has already been booked by another user.';
+      if (error.message?.includes('LEAD_ALREADY_BOOKED')) {
+        cleanMessage = 'This lead already has an active property booking.';
+      }
       return NextResponse.json(
         {
-          error: error.message.replace(/^.*:\s*/, '') || 'Unit has already been booked by another user.',
+          error: cleanMessage,
           code: 'CONCURRENCY_CONFLICT',
         },
         { status: 409 }

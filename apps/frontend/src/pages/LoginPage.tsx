@@ -136,6 +136,7 @@ export const LoginPage: React.FC = () => {
                 required
                 placeholder="name@realestatecrm.com"
                 value={email}
+                autoComplete="off"
                 onChange={(e) => {
                   setEmail(e.target.value);
                   setLoginErrors(prev => ({ ...prev, email: undefined }));
@@ -151,6 +152,7 @@ export const LoginPage: React.FC = () => {
                 required
                 placeholder="••••••••"
                 value={password}
+                autoComplete="new-password"
                 onChange={(e) => {
                   setPassword(e.target.value);
                   setLoginErrors(prev => ({ ...prev, password: undefined }));

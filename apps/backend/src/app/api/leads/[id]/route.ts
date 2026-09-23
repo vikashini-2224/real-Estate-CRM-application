@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { UpdateLeadSchema, Role } from '@realestate-crm/shared';
 
 // GET /api/leads/[id] - Get full lead profile with notes & booking details
-export const GET = withAuth(async (_req: NextRequest, { params }) => {
+export const GET = withAuth(async (_req: NextRequest, { params, user }) => {
   const id = params?.id as string;
   if (!id) {
     return NextResponse.json({ error: 'Lead ID is required' }, { status: 400 });
@@ -43,6 +43,13 @@ export const GET = withAuth(async (_req: NextRequest, { params }) => {
 
   if (!lead) {
     return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
+  }
+
+  if (user.role === Role.SALES_EMPLOYEE && lead.assignedToId !== user.id) {
+    return NextResponse.json(
+      { error: 'Forbidden: You can only access leads assigned to you' },
+      { status: 403 }
+    );
   }
 
   return NextResponse.json({
@@ -87,6 +94,13 @@ export const PATCH = withAuth(async (req: NextRequest, { params, user }) => {
   const existingLead = await prisma.lead.findUnique({ where: { id } });
   if (!existingLead) {
     return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
+  }
+
+  if (user.role === Role.SALES_EMPLOYEE && existingLead.assignedToId !== user.id) {
+    return NextResponse.json(
+      { error: 'Forbidden: You can only update leads assigned to you' },
+      { status: 403 }
+    );
   }
 
   const data = parsed.data;

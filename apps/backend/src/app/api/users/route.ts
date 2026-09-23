@@ -5,34 +5,37 @@ import { prisma } from '@/lib/prisma';
 import { CreateUserSchema, Role } from '@realestate-crm/shared';
 
 // GET /api/users - List users
-export const GET = withAuth(async () => {
-  const users = await prisma.user.findMany({
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true,
-      isActive: true,
-      createdAt: true,
-      _count: {
-        select: {
-          assignedLeads: true,
-          bookings: true,
+export const GET = withAuth(
+  async () => {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        isActive: true,
+        createdAt: true,
+        _count: {
+          select: {
+            assignedLeads: true,
+            bookings: true,
+          },
         },
       },
-    },
-    orderBy: { name: 'asc' },
-  });
+      orderBy: { name: 'asc' },
+    });
 
-  return NextResponse.json({
-    users: users.map((u) => ({
-      ...u,
-      createdAt: u.createdAt.toISOString(),
-      assignedLeadsCount: u._count.assignedLeads,
-      bookingsCount: u._count.bookings,
-    })),
-  });
-});
+    return NextResponse.json({
+      users: users.map((u) => ({
+        ...u,
+        createdAt: u.createdAt.toISOString(),
+        assignedLeadsCount: u._count.assignedLeads,
+        bookingsCount: u._count.bookings,
+      })),
+    });
+  },
+  { roles: [Role.ADMIN] }
+);
 
 // POST /api/users - Create new user (ADMIN only)
 export const POST = withAuth(

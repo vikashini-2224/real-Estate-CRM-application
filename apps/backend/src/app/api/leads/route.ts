@@ -26,7 +26,9 @@ export const GET = withAuth(async (req: NextRequest, { user }) => {
     where.stage = stage;
   }
 
-  if (myLeadsOnly && user.role === Role.SALES_EMPLOYEE) {
+  if (user.role === Role.SALES_EMPLOYEE) {
+    where.assignedToId = user.id;
+  } else if (myLeadsOnly) {
     where.assignedToId = user.id;
   } else if (assignedToId) {
     where.assignedToId = assignedToId === 'unassigned' ? null : assignedToId;
