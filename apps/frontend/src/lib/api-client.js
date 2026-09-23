@@ -7,7 +7,7 @@ export class ApiError extends Error {
   }
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? "https://real-estate-crm-application-backend.onrender.com" : "");
+const API_BASE_URL = import.meta.env.VITE_API_URL || "";
 
 export async function apiClient(endpoint, options = {}) {
   const defaultHeaders = {
