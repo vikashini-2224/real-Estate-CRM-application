@@ -21,16 +21,25 @@ export async function POST(req: NextRequest) {
       where: { email: email.toLowerCase() },
     });
 
-    if (!user || !user.isActive) {
+    if (!user) {
       return NextResponse.json(
-        { error: 'Invalid email or password' }
+        { error: 'Invalid email or password' },
+        { status: 401 }
+      );
+    }
+    
+    if (!user.isActive) {
+      return NextResponse.json(
+        { error: 'Your account has been deactivated. Please contact an administrator.' },
+        { status: 403 }
       );
     }
 
     const isMatch = await bcrypt.compare(password, user.passwordHash);
     if (!isMatch) {
       return NextResponse.json(
-        { error: 'Invalid email or password' }
+        { error: 'Invalid email or password' },
+        { status: 401 }
       );
     }
 

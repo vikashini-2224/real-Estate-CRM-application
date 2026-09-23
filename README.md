@@ -117,6 +117,15 @@ npm run dev --workspace=apps/frontend
 
 ## Authentication
 
+### Demo Credentials
+
+The database seed provides the following default accounts:
+
+| Role | Name | Email | Password |
+|------|------|-------|----------|
+| **Admin** | Victoria Vance | `admin@realestatecrm.com` | `password123` |
+| **Sales Rep** | John Miller | `john@realestatecrm.com` | `password123` |
+
 Role-Based Access Control (RBAC) is enforced at the API level via custom middleware (`withAuth`).
 
 | Role | Capabilities |
