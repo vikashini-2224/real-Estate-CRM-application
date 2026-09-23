@@ -39,6 +39,13 @@ model Lead {
   notes        Note[]
   booking      Booking?
   
+  interestedProjectId  String?
+  interestedProject    Project?  @relation(fields: [interestedProjectId], references: [id], onDelete: SetNull)
+  interestedBuildingId String?
+  interestedBuilding   Building? @relation(fields: [interestedBuildingId], references: [id], onDelete: SetNull)
+  interestedUnitId     String?
+  interestedUnit       Unit?     @relation(fields: [interestedUnitId], references: [id], onDelete: SetNull)
+  
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
@@ -65,9 +72,10 @@ model Project {
   id          String     @id @default(uuid())
   name        String
   location    String
-  description String?
-  buildings   Building[]
-  createdAt   DateTime   @default(now())
+  description     String?
+  buildings       Building[]
+  interestedLeads Lead[]
+  createdAt       DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
   @@map("projects")
@@ -77,9 +85,10 @@ model Building {
   id        String   @id @default(uuid())
   name      String
   projectId String
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  units     Unit[]
-  createdAt DateTime @default(now())
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  units           Unit[]
+  interestedLeads Lead[]
+  createdAt       DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([projectId])
@@ -94,9 +103,10 @@ model Unit {
   status     String   @default("AVAILABLE") // AVAILABLE, RESERVED, BOOKED
   buildingId String
   building   Building @relation(fields: [buildingId], references: [id], onDelete: Cascade)
-  version    Int      @default(1)
-  booking    Booking?
-  createdAt  DateTime @default(now())
+  version         Int      @default(1)
+  booking         Booking?
+  interestedLeads Lead[]
+  createdAt       DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   @@unique([buildingId, unitNumber])

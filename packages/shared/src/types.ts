@@ -40,6 +40,12 @@ export interface LeadDTO {
   } | null;
   notes?: NoteDTO[];
   booking?: BookingDTO | null;
+  interestedProjectId?: string | null;
+  interestedProject?: { id: string; name: string; location: string } | null;
+  interestedBuildingId?: string | null;
+  interestedBuilding?: { id: string; name: string } | null;
+  interestedUnitId?: string | null;
+  interestedUnit?: { id: string; unitNumber: string; type: UnitType; price: number } | null;
   createdAt: string;
   updatedAt: string;
 }

@@ -7,19 +7,25 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   helperText?: string;
   icon?: React.ReactNode;
   rightElement?: React.ReactNode;
+  labelRight?: React.ReactNode;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, helperText, id, required, icon, rightElement, ...props }, ref) => {
+  ({ className, label, error, helperText, id, required, icon, rightElement, labelRight, ...props }, ref) => {
     const inputId = id || (label ? label.toLowerCase().replace(/\s+/g, '-') : undefined);
 
     return (
       <div className="w-full space-y-1.5 relative">
-        {label && (
-          <label htmlFor={inputId} className="block text-xs font-semibold text-slate-700">
-            {label}
-            {required && <span className="text-rose-500 ml-0.5">*</span>}
-          </label>
+        {(label || labelRight) && (
+          <div className="flex items-center justify-between">
+            {label && (
+              <label htmlFor={inputId} className="block text-xs font-semibold text-slate-700">
+                {label}
+                {required && <span className="text-rose-500 ml-0.5">*</span>}
+              </label>
+            )}
+            {labelRight && <div className="text-xs">{labelRight}</div>}
+          </div>
         )}
         <div className="relative flex items-center">
           {icon && (
@@ -31,7 +37,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             ref={ref}
             className={cn(
-              'flex h-9 w-full rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 disabled:cursor-not-allowed disabled:bg-slate-50 transition-colors',
+              'flex h-9 w-full rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 disabled:cursor-not-allowed disabled:bg-slate-50 transition-colors',
               icon && 'pl-10',
               rightElement && 'pr-10',
               className
@@ -115,7 +121,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={textareaId}
           ref={ref}
           className={cn(
-            'flex min-h-[80px] w-full rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 disabled:cursor-not-allowed disabled:bg-slate-50 transition-colors',
+            'flex min-h-[80px] w-full rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 disabled:cursor-not-allowed disabled:bg-slate-50 transition-colors',
             className
           )}
           {...props}

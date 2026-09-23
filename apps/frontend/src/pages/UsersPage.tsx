@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ShieldCheck, Plus, UserCheck, Mail, Shield, UserX, Check } from 'lucide-react';
+import { ShieldCheck, Plus, UserCheck, Mail, Shield, UserX, Check, Eye, EyeOff } from 'lucide-react';
 import { apiClient } from '@/lib/api-client';
 import { UserDTO, Role } from '@realestate-crm/shared';
 import { useAuth } from '@/context/AuthContext';
@@ -20,6 +20,7 @@ export const UsersPage: React.FC = () => {
   const queryClient = useQueryClient();
 
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [newUserForm, setNewUserForm] = useState({
     name: '',
     email: '',
@@ -27,6 +28,13 @@ export const UsersPage: React.FC = () => {
     role: Role.SALES_EMPLOYEE,
   });
   const [newUserErrors, setNewUserErrors] = useState<{ name?: string; email?: string; password?: string }>({});
+
+  const handleCloseModal = () => {
+    setIsAddUserModalOpen(false);
+    setNewUserForm({ name: '', email: '', password: '', role: Role.SALES_EMPLOYEE });
+    setNewUserErrors({});
+    setShowPassword(false);
+  };
 
   // Query Users
   const { data, isLoading } = useQuery<{ users: (UserDTO & { assignedLeadsCount?: number; bookingsCount?: number })[] }>({
@@ -190,7 +198,7 @@ export const UsersPage: React.FC = () => {
       {/* Add User Modal */}
       <Modal
         isOpen={isAddUserModalOpen}
-        onClose={() => setIsAddUserModalOpen(false)}
+        onClose={handleCloseModal}
         title="Add New Team Member"
         description="Create account for sales representative or administrator"
       >
@@ -198,6 +206,7 @@ export const UsersPage: React.FC = () => {
           <Input
             label="Full Name"
             required
+            autoComplete="off"
             placeholder="e.g. John Miller"
             value={newUserForm.name}
             onChange={(e) => {
@@ -211,6 +220,7 @@ export const UsersPage: React.FC = () => {
             label="Email Address"
             type="email"
             required
+            autoComplete="off"
             placeholder="e.g. john@realestatecrm.com"
             value={newUserForm.email}
             onChange={(e) => {
@@ -222,8 +232,9 @@ export const UsersPage: React.FC = () => {
 
           <Input
             label="Temporary Password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             required
+            autoComplete="new-password"
             placeholder="••••••••"
             value={newUserForm.password}
             onChange={(e) => {
@@ -231,6 +242,17 @@ export const UsersPage: React.FC = () => {
               setNewUserErrors(prev => ({ ...prev, password: undefined }));
             }}
             error={newUserErrors.password}
+            rightElement={
+              <button
+                type="button"
+                tabIndex={-1}
+                className="p-1 text-slate-400 hover:text-slate-600 focus:outline-none focus:text-blue-600 rounded"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            }
           />
 
           <Select
@@ -238,8 +260,8 @@ export const UsersPage: React.FC = () => {
             value={newUserForm.role}
             onChange={(e) => setNewUserForm({ ...newUserForm, role: e.target.value as Role })}
           >
-            <option value={Role.SALES_EMPLOYEE}>Sales Employee (Sales Rep)</option>
-            <option value={Role.ADMIN}>Administrator (Full System Access)</option>
+            <option value={Role.SALES_EMPLOYEE}>Sales Representative</option>
+            <option value={Role.ADMIN}>Administrator</option>
           </Select>
 
           <div className="flex justify-end gap-2 pt-3 border-t">
@@ -247,7 +269,7 @@ export const UsersPage: React.FC = () => {
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => setIsAddUserModalOpen(false)}
+              onClick={handleCloseModal}
             >
               Cancel
             </Button>

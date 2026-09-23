@@ -18,3 +18,4 @@ out
 # Prisma
 dev.db
 dev.db-journal
+.vercel

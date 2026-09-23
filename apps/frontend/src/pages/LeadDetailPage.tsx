@@ -17,7 +17,7 @@ import {
   Check,
 } from 'lucide-react';
 import { apiClient } from '@/lib/api-client';
-import { LeadDTO, LeadStage, UnitDTO, UserDTO } from '@realestate-crm/shared';
+import { LeadDTO, LeadStage, UnitDTO, UserDTO, ProjectDTO } from '@realestate-crm/shared';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/Toast';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
@@ -57,6 +57,9 @@ export const LeadDetailPage: React.FC = () => {
     requirement: '',
     followUpDate: '',
     assignedToId: '',
+    interestedProjectId: '',
+    interestedBuildingId: '',
+    interestedUnitId: '',
   });
   const [editErrors, setEditErrors] = useState<{ name?: string; phone?: string }>({});
 
@@ -79,7 +82,22 @@ export const LeadDetailPage: React.FC = () => {
     queryFn: () => apiClient<{ users: UserDTO[] }>('/api/users'),
   });
 
+  // Query Projects for Property Interest
+  const { data: projectsData } = useQuery<{ projects: ProjectDTO[] }>({
+    queryKey: ['projects'],
+    queryFn: () => apiClient<{ projects: ProjectDTO[] }>('/api/properties/projects'),
+  });
+
+  // Query Units for selected building in Edit Form
+  const { data: buildingUnitsData } = useQuery<{ units: UnitDTO[] }>({
+    queryKey: ['units', editForm.interestedBuildingId],
+    queryFn: () => apiClient<{ units: UnitDTO[] }>(`/api/properties/units?buildingId=${editForm.interestedBuildingId}`),
+    enabled: !!editForm.interestedBuildingId,
+  });
+
   const lead = data?.lead;
+  
+  const availableBuildings = projectsData?.projects.find(p => p.id === editForm.interestedProjectId)?.buildings || [];
 
   // Add Note Mutation
   const addNoteMutation = useMutation({
@@ -146,6 +164,9 @@ export const LeadDetailPage: React.FC = () => {
       requirement: lead.requirement || '',
       followUpDate: lead.followUpDate ? lead.followUpDate.slice(0, 16) : '',
       assignedToId: lead.assignedToId || '',
+      interestedProjectId: lead.interestedProjectId || '',
+      interestedBuildingId: lead.interestedBuildingId || '',
+      interestedUnitId: lead.interestedUnitId || '',
     });
     setIsEditModalOpen(true);
   };
@@ -170,6 +191,9 @@ export const LeadDetailPage: React.FC = () => {
       requirement: editForm.requirement || null,
       followUpDate: editForm.followUpDate ? new Date(editForm.followUpDate).toISOString() : null,
       assignedToId: editForm.assignedToId || null,
+      interestedProjectId: editForm.interestedProjectId || null,
+      interestedBuildingId: editForm.interestedBuildingId || null,
+      interestedUnitId: editForm.interestedUnitId || null,
     });
   };
 
@@ -425,6 +449,37 @@ export const LeadDetailPage: React.FC = () => {
                   </p>
                 </div>
               )}
+
+              {/* Property Interest Section */}
+              <div className="pt-4 border-t border-slate-100">
+                <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                  Property Interest
+                </p>
+                {lead.interestedProject || lead.interestedBuilding || lead.interestedUnit ? (
+                  <div className="space-y-2">
+                    {lead.interestedProject && (
+                      <div className="flex justify-between py-1 border-b border-slate-50">
+                        <span className="text-slate-500">Project:</span>
+                        <span className="font-semibold text-slate-800 text-right">{lead.interestedProject.name}</span>
+                      </div>
+                    )}
+                    {lead.interestedBuilding && (
+                      <div className="flex justify-between py-1 border-b border-slate-50">
+                        <span className="text-slate-500">Building:</span>
+                        <span className="font-semibold text-slate-800 text-right">{lead.interestedBuilding.name}</span>
+                      </div>
+                    )}
+                    {lead.interestedUnit && (
+                      <div className="flex justify-between py-1">
+                        <span className="text-slate-500">Unit:</span>
+                        <span className="font-semibold text-slate-800 text-right">#{lead.interestedUnit.unitNumber}</span>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-[11px] text-slate-400 italic">No specific property interest specified.</p>
+                )}
+              </div>
             </CardContent>
           </Card>
 
@@ -623,6 +678,50 @@ export const LeadDetailPage: React.FC = () => {
             value={editForm.requirement}
             onChange={(e) => setEditForm({ ...editForm, requirement: e.target.value })}
           />
+
+          <div className="pt-2">
+            <h4 className="text-xs font-semibold text-slate-700 mb-2">Property Interest (Optional)</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <Select
+                label="Project"
+                value={editForm.interestedProjectId}
+                onChange={(e) => {
+                  setEditForm({ ...editForm, interestedProjectId: e.target.value, interestedBuildingId: '', interestedUnitId: '' });
+                }}
+              >
+                <option value="">Any Project</option>
+                {projectsData?.projects.map(p => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
+              </Select>
+              
+              <Select
+                label="Building"
+                value={editForm.interestedBuildingId}
+                onChange={(e) => {
+                  setEditForm({ ...editForm, interestedBuildingId: e.target.value, interestedUnitId: '' });
+                }}
+                disabled={!editForm.interestedProjectId}
+              >
+                <option value="">Any Building</option>
+                {availableBuildings.map(b => (
+                  <option key={b.id} value={b.id}>{b.name}</option>
+                ))}
+              </Select>
+
+              <Select
+                label="Unit"
+                value={editForm.interestedUnitId}
+                onChange={(e) => setEditForm({ ...editForm, interestedUnitId: e.target.value })}
+                disabled={!editForm.interestedBuildingId}
+              >
+                <option value="">Any Unit</option>
+                {buildingUnitsData?.units.map(u => (
+                  <option key={u.id} value={u.id}>#{u.unitNumber} ({u.status})</option>
+                ))}
+              </Select>
+            </div>
+          </div>
 
           <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
             <Button

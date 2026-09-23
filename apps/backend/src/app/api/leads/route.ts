@@ -54,6 +54,15 @@ export const GET = withAuth(async (req: NextRequest, { user }) => {
       _count: {
         select: { notes: true },
       },
+      interestedProject: {
+        select: { id: true, name: true, location: true },
+      },
+      interestedBuilding: {
+        select: { id: true, name: true },
+      },
+      interestedUnit: {
+        select: { id: true, unitNumber: true, type: true, price: true },
+      },
     },
     orderBy: { updatedAt: 'desc' },
   });
@@ -82,6 +91,35 @@ export const POST = withAuth(async (req: NextRequest, { user }) => {
   }
 
   const data = parsed.data;
+
+  // Hierarchy Validation
+  if (data.interestedUnitId) {
+    const unit = await prisma.unit.findUnique({
+      where: { id: data.interestedUnitId },
+      include: { building: true },
+    });
+    if (!unit) return NextResponse.json({ error: 'Invalid interested unit' }, { status: 400 });
+    
+    if (data.interestedBuildingId && data.interestedBuildingId !== unit.buildingId) {
+      return NextResponse.json({ error: 'Unit does not belong to the selected building' }, { status: 400 });
+    }
+    if (data.interestedProjectId && data.interestedProjectId !== unit.building.projectId) {
+      return NextResponse.json({ error: 'Unit does not belong to the selected project' }, { status: 400 });
+    }
+    data.interestedBuildingId = unit.buildingId;
+    data.interestedProjectId = unit.building.projectId;
+  } else if (data.interestedBuildingId) {
+    const building = await prisma.building.findUnique({
+      where: { id: data.interestedBuildingId },
+    });
+    if (!building) return NextResponse.json({ error: 'Invalid interested building' }, { status: 400 });
+    
+    if (data.interestedProjectId && data.interestedProjectId !== building.projectId) {
+      return NextResponse.json({ error: 'Building does not belong to the selected project' }, { status: 400 });
+    }
+    data.interestedProjectId = building.projectId;
+  }
+
   const lead = await prisma.lead.create({
     data: {
       name: data.name,
@@ -92,10 +130,22 @@ export const POST = withAuth(async (req: NextRequest, { user }) => {
       requirement: data.requirement ?? null,
       followUpDate: data.followUpDate ? new Date(data.followUpDate) : null,
       assignedToId: data.assignedToId || (user.role === Role.SALES_EMPLOYEE ? user.id : null),
+      interestedProjectId: data.interestedProjectId || null,
+      interestedBuildingId: data.interestedBuildingId || null,
+      interestedUnitId: data.interestedUnitId || null,
     },
     include: {
       assignedTo: {
         select: { id: true, name: true, email: true },
+      },
+      interestedProject: {
+        select: { id: true, name: true, location: true },
+      },
+      interestedBuilding: {
+        select: { id: true, name: true },
+      },
+      interestedUnit: {
+        select: { id: true, unitNumber: true, type: true, price: true },
       },
     },
   });

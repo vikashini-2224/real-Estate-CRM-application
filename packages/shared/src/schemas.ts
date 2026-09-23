@@ -28,6 +28,9 @@ export const CreateLeadSchema = z.object({
   requirement: z.string().optional().nullable(),
   followUpDate: z.string().datetime().optional().nullable(),
   assignedToId: z.string().uuid().optional().nullable().or(z.literal('')),
+  interestedProjectId: z.string().uuid().optional().nullable().or(z.literal('')),
+  interestedBuildingId: z.string().uuid().optional().nullable().or(z.literal('')),
+  interestedUnitId: z.string().uuid().optional().nullable().or(z.literal('')),
 });
 
 export const UpdateLeadSchema = z.object({
@@ -39,6 +42,9 @@ export const UpdateLeadSchema = z.object({
   requirement: z.string().optional().nullable(),
   followUpDate: z.string().datetime().optional().nullable(),
   assignedToId: z.string().uuid().optional().nullable().or(z.literal('')),
+  interestedProjectId: z.string().uuid().optional().nullable().or(z.literal('')),
+  interestedBuildingId: z.string().uuid().optional().nullable().or(z.literal('')),
+  interestedUnitId: z.string().uuid().optional().nullable().or(z.literal('')),
 });
 
 export const CreateNoteSchema = z.object({

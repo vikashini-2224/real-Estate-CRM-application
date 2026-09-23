@@ -38,6 +38,15 @@ export const GET = withAuth(async (_req: NextRequest, { params, user }) => {
           },
         },
       },
+      interestedProject: {
+        select: { id: true, name: true, location: true },
+      },
+      interestedBuilding: {
+        select: { id: true, name: true },
+      },
+      interestedUnit: {
+        select: { id: true, unitNumber: true, type: true, price: true },
+      },
     },
   });
 
@@ -117,6 +126,38 @@ export const PATCH = withAuth(async (req: NextRequest, { params, user }) => {
   if (data.assignedToId !== undefined) {
     updatePayload.assignedToId = data.assignedToId || null;
   }
+  
+  if (data.interestedProjectId !== undefined) updatePayload.interestedProjectId = data.interestedProjectId || null;
+  if (data.interestedBuildingId !== undefined) updatePayload.interestedBuildingId = data.interestedBuildingId || null;
+  if (data.interestedUnitId !== undefined) updatePayload.interestedUnitId = data.interestedUnitId || null;
+  
+  // Hierarchy Validation
+  if (updatePayload.interestedUnitId) {
+    const unit = await prisma.unit.findUnique({
+      where: { id: updatePayload.interestedUnitId },
+      include: { building: true },
+    });
+    if (!unit) return NextResponse.json({ error: 'Invalid interested unit' }, { status: 400 });
+    
+    if (updatePayload.interestedBuildingId && updatePayload.interestedBuildingId !== unit.buildingId) {
+      return NextResponse.json({ error: 'Unit does not belong to the selected building' }, { status: 400 });
+    }
+    if (updatePayload.interestedProjectId && updatePayload.interestedProjectId !== unit.building.projectId) {
+      return NextResponse.json({ error: 'Unit does not belong to the selected project' }, { status: 400 });
+    }
+    updatePayload.interestedBuildingId = unit.buildingId;
+    updatePayload.interestedProjectId = unit.building.projectId;
+  } else if (updatePayload.interestedBuildingId) {
+    const building = await prisma.building.findUnique({
+      where: { id: updatePayload.interestedBuildingId },
+    });
+    if (!building) return NextResponse.json({ error: 'Invalid interested building' }, { status: 400 });
+    
+    if (updatePayload.interestedProjectId && updatePayload.interestedProjectId !== building.projectId) {
+      return NextResponse.json({ error: 'Building does not belong to the selected project' }, { status: 400 });
+    }
+    updatePayload.interestedProjectId = building.projectId;
+  }
 
   // Handle stage change with audit note
   if (data.stage && data.stage !== existingLead.stage) {
@@ -136,6 +177,15 @@ export const PATCH = withAuth(async (req: NextRequest, { params, user }) => {
     include: {
       assignedTo: {
         select: { id: true, name: true, email: true },
+      },
+      interestedProject: {
+        select: { id: true, name: true, location: true },
+      },
+      interestedBuilding: {
+        select: { id: true, name: true },
+      },
+      interestedUnit: {
+        select: { id: true, unitNumber: true, type: true, price: true },
       },
     },
   });
