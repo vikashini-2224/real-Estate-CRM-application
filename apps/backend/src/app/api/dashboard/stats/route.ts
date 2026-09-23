@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { withAuth } from '@/lib/api-guard';
-import { prisma } from '@/lib/prisma';
+import { withAuth } from '../../../../lib/api-guard';
+import { prisma } from '../../../../lib/prisma';
 import { LeadStage } from '@realestate-crm/shared';
 
 // GET /api/dashboard/stats - Sales and Inventory Analytics

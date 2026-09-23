@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { withAuth } from '@/lib/api-guard';
-import { prisma } from '@/lib/prisma';
+import { withAuth } from '../../../../../lib/api-guard';
+import { prisma } from '../../../../../lib/prisma';
 import { UpdateUnitSchema, Role } from '@realestate-crm/shared';
 
 // PATCH /api/properties/units/[id] - Update unit (ADMIN only)

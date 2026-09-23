@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { withAuth } from '@/lib/api-guard';
-import { prisma } from '@/lib/prisma';
+import { withAuth } from '../../../../../lib/api-guard';
+import { prisma } from '../../../../../lib/prisma';
 
 // GET /api/properties/projects/[id] - Get project with buildings and units
 export const GET = withAuth(async (_req: NextRequest, { params }) => {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { withAuth } from '@/lib/api-guard';
-import { prisma } from '@/lib/prisma';
+import { withAuth } from '../../../../lib/api-guard';
+import { prisma } from '../../../../lib/prisma';
 import { CreateProjectSchema, Role } from '@realestate-crm/shared';
 
 // GET /api/properties/projects - List all projects with building and unit counts

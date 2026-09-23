@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { withAuth } from '@/lib/api-guard';
-import { prisma } from '@/lib/prisma';
+import { withAuth } from '../../../../../lib/api-guard';
+import { prisma } from '../../../../../lib/prisma';
 import { CreateNoteSchema } from '@realestate-crm/shared';
 
 // POST /api/leads/[id]/notes - Add note to lead

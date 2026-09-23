@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import { withAuth } from '@/lib/api-guard';
-import { prisma } from '@/lib/prisma';
+import { withAuth } from '../../../lib/api-guard';
+import { prisma } from '../../../lib/prisma';
 import { CreateUserSchema, Role } from '@realestate-crm/shared';
 
 // GET /api/users - List users

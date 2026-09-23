@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import { prisma } from '@/lib/prisma';
-import { signAuthToken, AUTH_COOKIE_NAME } from '@/lib/auth';
+import { prisma } from '../../../../lib/prisma';
+import { signAuthToken, AUTH_COOKIE_NAME } from '../../../../lib/auth';
 import { LoginSchema, Role } from '@realestate-crm/shared';
 
 export async function POST(req: NextRequest) {
