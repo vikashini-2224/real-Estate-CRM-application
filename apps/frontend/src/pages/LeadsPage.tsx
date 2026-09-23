@@ -255,46 +255,46 @@ export const LeadsPage: React.FC = () => {
             <table className="w-full text-left text-xs text-slate-600">
               <thead className="bg-slate-50/80 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-100 text-[11px]">
                 <tr>
-                  <th className="px-5 py-3.5">Lead Name</th>
-                  <th className="px-5 py-3.5">Contact Details</th>
-                  <th className="px-5 py-3.5">Stage</th>
-                  <th className="px-5 py-3.5">Budget</th>
-                  <th className="px-5 py-3.5">Follow-up</th>
-                  <th className="px-5 py-3.5">Assigned Agent</th>
-                  <th className="px-5 py-3.5 text-right">Actions</th>
+                  <th className="px-3 py-3.5">Lead Name</th>
+                  <th className="px-3 py-3.5">Contact Details</th>
+                  <th className="px-3 py-3.5">Stage</th>
+                  <th className="px-3 py-3.5">Budget</th>
+                  <th className="px-3 py-3.5 whitespace-nowrap">Follow-up</th>
+                  <th className="px-3 py-3.5 whitespace-nowrap">Assigned Agent</th>
+                  <th className="px-3 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {leads.map((lead) => (
                   <tr key={lead.id} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="px-5 py-3.5">
+                    <td className="px-3 py-3.5">
                       <button
                         onClick={() => navigate(`/leads/${lead.id}`)}
-                        className="font-bold text-slate-900 hover:text-blue-600 text-left transition-colors"
+                        className="font-bold text-slate-900 hover:text-blue-600 text-left transition-colors whitespace-nowrap"
                       >
                         {lead.name}
                       </button>
                       {lead.requirement && (
-                        <p className="text-[11px] text-slate-400 truncate max-w-xs mt-0.5">
+                        <p className="text-[11px] text-slate-400 truncate max-w-[120px] sm:max-w-[180px] mt-0.5">
                           {lead.requirement}
                         </p>
                       )}
                     </td>
 
-                    <td className="px-5 py-3.5 space-y-0.5">
-                      <div className="flex items-center gap-1.5 text-slate-700 font-medium">
+                    <td className="px-3 py-3.5 space-y-0.5">
+                      <div className="flex items-center gap-1.5 text-slate-700 font-medium whitespace-nowrap">
                         <Phone className="w-3 h-3 text-slate-400" />
                         <span>{lead.phone}</span>
                       </div>
                       {lead.email && (
-                        <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
+                        <div className="flex items-center gap-1.5 text-[11px] text-slate-400 whitespace-nowrap">
                           <Mail className="w-3 h-3 text-slate-300" />
                           <span>{lead.email}</span>
                         </div>
                       )}
                     </td>
 
-                    <td className="px-5 py-3.5">
+                    <td className="px-3 py-3.5">
                       {/* Quick stage dropdown */}
                       <select
                         value={lead.stage}
@@ -304,7 +304,7 @@ export const LeadsPage: React.FC = () => {
                             stage: e.target.value as LeadStage,
                           })
                         }
-                        className="h-7 px-2 rounded border border-slate-200 bg-white text-[11px] font-semibold text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        className="h-7 px-2 rounded border border-slate-200 bg-white text-[11px] font-semibold text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 whitespace-nowrap"
                       >
                         {Object.values(LeadStage).map((st) => (
                           <option key={st} value={st}>
@@ -314,11 +314,11 @@ export const LeadsPage: React.FC = () => {
                       </select>
                     </td>
 
-                    <td className="px-5 py-3.5 font-semibold text-slate-900">
+                    <td className="px-3 py-3.5 font-semibold text-slate-900 whitespace-nowrap">
                       {formatCurrencyINR(lead.budget)}
                     </td>
 
-                    <td className="px-5 py-3.5">
+                    <td className="px-3 py-3.5 whitespace-nowrap">
                       {lead.followUpDate ? (
                         <span className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-700">
                           <Calendar className="w-3 h-3 text-amber-500" />
@@ -329,13 +329,13 @@ export const LeadsPage: React.FC = () => {
                       )}
                     </td>
 
-                    <td className="px-5 py-3.5">
+                    <td className="px-3 py-3.5 whitespace-nowrap">
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 text-[11px] font-medium">
                         {lead.assignedTo?.name || 'Unassigned'}
                       </span>
                     </td>
 
-                    <td className="px-5 py-3.5 text-right">
+                    <td className="px-3 py-3.5 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-1.5">
                         <Button
                           variant="outline"
