@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "next dev -p 3001",
     "build": "rm -rf .next && prisma generate && next build",
-    "start": "next start -p 3001",
+    "start": "next start",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "node prisma/seed.js"
   },
   "dependencies": {
     "@prisma/client": "^5.19.1",
