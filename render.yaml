@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: apex-crm-backend
+    env: node
+    buildCommand: npm install && npm run build --workspace=apps/backend
+    startCommand: npm start --workspace=apps/backend
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: '10000'
+      - key: DATABASE_URL
+        sync: false # You will need to paste your Supabase connection string here in the Render Dashboard
+      - key: JWT_SECRET
+        generateValue: true
+      - key: COOKIE_SECRET
+        generateValue: true
