@@ -4,13 +4,15 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useToast } from '@/components/ui/Toast';
-import { Building2, Shield, UserCheck, Lock, Mail, ArrowRight } from 'lucide-react';
+import { Building2, Shield, UserCheck, Lock, Mail, ArrowRight, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loginErrors, setLoginErrors] = useState<{ email?: string; password?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedPersona, setSelectedPersona] = useState<string | null>(null);
   const { login } = useAuth();
   const { success, error } = useToast();
   const navigate = useNavigate();
@@ -40,6 +42,7 @@ export const LoginPage: React.FC = () => {
   };
 
   const handleQuickLogin = async (demoEmail: string) => {
+    setSelectedPersona(demoEmail);
     setEmail(demoEmail);
     setPassword('password123');
     setIsLoading(true);
@@ -49,91 +52,145 @@ export const LoginPage: React.FC = () => {
       navigate('/dashboard');
     } catch (err: any) {
       error(err.message || 'Login failed');
-    } finally {
       setIsLoading(false);
+      setSelectedPersona(null);
     }
   };
 
   return (
-    <div className="min-h-screen flex bg-slate-100">
-      {/* Left Column: Hero & Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[#081523] text-white p-12 flex-col justify-between relative overflow-hidden border-r border-slate-800">
-        <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute left-10 top-1/4 w-72 h-72 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none" />
+    <div className="min-h-screen flex bg-slate-50">
+      {/* LEFT SIDE — BRAND PANEL */}
+      <div className="hidden lg:flex w-[45%] bg-[#081A2D] text-white p-14 flex-col justify-between relative overflow-hidden">
+        {/* Subtle geometric background elements */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
+          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+            <path d="M0,100 L500,600 L1000,100" fill="none" stroke="rgba(37,99,235,0.2)" strokeWidth="2" />
+            <path d="M0,200 L500,700 L1000,200" fill="none" stroke="rgba(37,99,235,0.1)" strokeWidth="2" />
+          </svg>
+        </div>
 
         <div className="relative z-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/25">
-              <Building2 className="w-6 h-6" />
+            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/30">
+              <Building2 className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight">APEX REAL ESTATE CRM</h1>
-              <p className="text-xs text-slate-400">Enterprise Asset & Inventory Management</p>
+              <h1 className="text-xl font-bold tracking-tight text-white">APEX CRM</h1>
+              <p className="text-xs text-slate-300 font-medium">Real Estate Enterprise</p>
             </div>
           </div>
         </div>
 
         <div className="relative z-10 space-y-6 max-w-lg">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold tracking-wide">
             <Shield className="w-3.5 h-3.5" />
-            <span>ACID-Compliant Concurrency Engine</span>
+            <span>Enterprise Real Estate CRM</span>
           </div>
-          <h2 className="text-3xl font-extrabold tracking-tight leading-tight text-white">
+          <h2 className="text-[2.5rem] font-bold tracking-tight leading-[1.15] text-white">
             Transform lead pipelines into closed real estate contracts.
           </h2>
-          <p className="text-sm text-slate-400 leading-relaxed">
-            Manage multi-tier project inventories, track leads through custom sales stages, and guarantee zero double-booking with database-level isolation.
+          <p className="text-[15px] text-slate-300 leading-relaxed font-medium">
+            Manage customer relationships, property inventory, sales pipelines, and bookings from one unified platform.
           </p>
         </div>
 
-        <div className="relative z-10 pt-8 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-          <span>Enterprise Real Estate Suite v1.0</span>
-          <span>Role-Based Access Control</span>
+        <div className="relative z-10 flex flex-col gap-1 text-xs text-slate-400 font-medium">
+          <span className="text-slate-300">APEX Real Estate Suite</span>
+          <span>Secure • Reliable • Role-based</span>
         </div>
       </div>
 
-      {/* Right Column: Authentication Card */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-200/80 p-8 space-y-6">
-          <div className="space-y-1">
-            <h2 className="text-xl font-bold text-slate-900 tracking-tight">Sign in to your account</h2>
-            <p className="text-xs text-slate-500">Enter your enterprise credentials to access the CRM portal</p>
+      {/* RIGHT SIDE — LOGIN PANEL */}
+      <div className="w-full lg:w-[55%] flex flex-col items-center justify-center p-6 sm:p-12">
+        {/* Mobile Branding (hidden on desktop) */}
+        <div className="lg:hidden flex flex-col items-center mb-8 gap-2">
+          <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/30">
+            <Building2 className="w-7 h-7 text-white" />
+          </div>
+          <div className="text-center">
+            <h1 className="text-xl font-bold tracking-tight text-slate-900">APEX CRM</h1>
+            <p className="text-xs text-slate-500 font-medium">Real Estate Enterprise</p>
+          </div>
+        </div>
+
+        {/* Login Card */}
+        <div className="w-full max-w-[460px] bg-white rounded-[24px] shadow-xl shadow-slate-200/50 border border-slate-200 p-8 sm:p-10">
+          
+          {/* Card Header */}
+          <div className="hidden lg:flex items-center gap-2.5 mb-8">
+            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
+              <Building2 className="w-4 h-4 text-white" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-slate-900 leading-tight">APEX CRM</h2>
+              <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Real Estate Enterprise</p>
+            </div>
           </div>
 
-          {/* Quick Demo Login Previews */}
-          <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/70 space-y-2.5">
-            <div className="text-[11px] font-semibold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
-              <UserCheck className="w-3.5 h-3.5 text-blue-600" />
+          <div className="space-y-1.5 mb-8">
+            <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Sign in to your account</h3>
+            <p className="text-sm text-slate-500">Enter your enterprise credentials to access the CRM portal</p>
+          </div>
+
+          {/* Demo Personas */}
+          <div className="mb-8 space-y-3">
+            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <UserCheck className="w-3.5 h-3.5 text-slate-400" />
               <span>One-Click Demo Personas</span>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => handleQuickLogin('admin@realestatecrm.com')}
                 disabled={isLoading}
-                className="flex flex-col items-start p-2.5 rounded-lg border border-slate-200 bg-white hover:border-blue-500 hover:shadow-sm text-left transition-all group"
+                className={`relative flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
+                  selectedPersona === 'admin@realestatecrm.com'
+                    ? 'border-blue-600 bg-blue-50'
+                    : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
+                }`}
               >
-                <span className="text-xs font-bold text-slate-800 group-hover:text-blue-600">Admin</span>
-                <span className="text-[10px] text-slate-400">Victoria Vance</span>
+                {selectedPersona === 'admin@realestatecrm.com' && (
+                  <CheckCircle2 className="w-4 h-4 text-blue-600 absolute top-3 right-3" />
+                )}
+                <span className={`text-sm font-bold ${selectedPersona === 'admin@realestatecrm.com' ? 'text-blue-700' : 'text-slate-800'}`}>Admin</span>
+                <span className="text-xs text-slate-900 mt-1">Victoria Vance</span>
+                <span className="text-[11px] text-slate-500 mt-0.5">Administrator</span>
               </button>
+
               <button
                 type="button"
                 onClick={() => handleQuickLogin('john@realestatecrm.com')}
                 disabled={isLoading}
-                className="flex flex-col items-start p-2.5 rounded-lg border border-slate-200 bg-white hover:border-blue-500 hover:shadow-sm text-left transition-all group"
+                className={`relative flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
+                  selectedPersona === 'john@realestatecrm.com'
+                    ? 'border-blue-600 bg-blue-50'
+                    : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
+                }`}
               >
-                <span className="text-xs font-bold text-slate-800 group-hover:text-blue-600">Sales Rep</span>
-                <span className="text-[10px] text-slate-400">John Miller</span>
+                {selectedPersona === 'john@realestatecrm.com' && (
+                  <CheckCircle2 className="w-4 h-4 text-blue-600 absolute top-3 right-3" />
+                )}
+                <span className={`text-sm font-bold ${selectedPersona === 'john@realestatecrm.com' ? 'text-blue-700' : 'text-slate-800'}`}>Sales Rep</span>
+                <span className="text-xs text-slate-900 mt-1">John Miller</span>
+                <span className="text-[11px] text-slate-500 mt-0.5">Sales Representative</span>
               </button>
             </div>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-4" noValidate>
+          <form onSubmit={handleLogin} className="space-y-5" noValidate>
             <div>
               <Input
                 label="Email Address"
                 type="email"
                 required
+                icon={<Mail className="w-4 h-4" />}
                 placeholder="name@realestatecrm.com"
                 value={email}
                 autoComplete="off"
@@ -142,15 +199,17 @@ export const LoginPage: React.FC = () => {
                   setLoginErrors(prev => ({ ...prev, email: undefined }));
                 }}
                 error={loginErrors.email}
+                className="h-12 rounded-xl text-[15px]"
               />
             </div>
 
             <div>
               <Input
                 label="Password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 required
-                placeholder="••••••••"
+                icon={<Lock className="w-4 h-4" />}
+                placeholder="••••••••••••••••"
                 value={password}
                 autoComplete="new-password"
                 onChange={(e) => {
@@ -158,23 +217,37 @@ export const LoginPage: React.FC = () => {
                   setLoginErrors(prev => ({ ...prev, password: undefined }));
                 }}
                 error={loginErrors.password}
+                className="h-12 rounded-xl text-[15px]"
+                rightElement={
+                  <button
+                    type="button"
+                    tabIndex={-1}
+                    className="p-1 text-slate-400 hover:text-slate-600 focus:outline-none focus:text-blue-600 rounded"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                }
               />
             </div>
 
             <Button
               type="submit"
-              className="w-full mt-2"
+              className="w-full h-12 rounded-xl text-[15px] font-semibold mt-2 bg-blue-600 hover:bg-blue-700"
               size="lg"
               isLoading={isLoading}
-              icon={<ArrowRight className="w-4 h-4" />}
+              icon={!isLoading ? <ArrowRight className="w-4 h-4" /> : undefined}
             >
-              Sign In to CRM
+              {isLoading ? 'Signing in...' : 'Sign In to CRM'}
             </Button>
           </form>
 
-          <div className="pt-2 text-center">
-            <p className="text-[11px] text-slate-400">
-              Secured with HTTP-Only JWT tokens & Role-based Access Control
+          {/* Security Footer */}
+          <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-center gap-2">
+            <Shield className="w-4 h-4 text-slate-400" />
+            <p className="text-[11px] text-slate-500 font-medium">
+              Protected by secure authentication & role-based access control
             </p>
           </div>
         </div>
