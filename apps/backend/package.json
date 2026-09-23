@@ -1,0 +1,32 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3001",
+    "build": "prisma generate && next build",
+    "start": "next start -p 3001",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.19.1",
+    "@realestate-crm/shared": "*",
+    "bcryptjs": "^2.4.3",
+    "jose": "^5.8.0",
+    "next": "^14.2.13",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20.16.5",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "prisma": "^5.19.1",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "real-estate-crm-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:frontend": "npm run dev --workspace=apps/frontend",
+    "dev:backend": "npm run dev --workspace=apps/backend",
+    "build": "npm run build --workspaces --if-present",
+    "seed": "npm run seed --workspace=apps/backend",
+    "test:concurrency": "node apps/backend/scripts/test-concurrency.mjs"
+  }
+}

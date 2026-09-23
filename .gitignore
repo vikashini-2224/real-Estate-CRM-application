@@ -1,0 +1,20 @@
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+.npm
+.yarn
+
+# Next.js
+.next
+out
+
+# env files
+.env
+.env.*
+!.env.example
+
+# Prisma
+dev.db
+dev.db-journal
