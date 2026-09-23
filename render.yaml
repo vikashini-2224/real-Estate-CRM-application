@@ -2,6 +2,7 @@ services:
   - type: web
     name: apex-crm-backend
     env: node
+    plan: free
     buildCommand: npm install && npm run build --workspace=apps/backend
     startCommand: npm start --workspace=apps/backend
     envVars:
