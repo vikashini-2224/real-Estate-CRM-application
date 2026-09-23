@@ -12,5 +12,9 @@
     "build": "npm run build --workspaces --if-present",
     "seed": "npm run seed --workspace=apps/backend",
     "test:concurrency": "node apps/backend/scripts/test-concurrency.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "typescript": "^7.0.2"
   }
 }
